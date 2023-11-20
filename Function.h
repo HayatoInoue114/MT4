@@ -4,6 +4,8 @@
 #include<assert.h>
 #include<cmath>
 #include <algorithm>
+#include <iostream>
+#include <string>
 
 #define M_PI 3.14f
 
@@ -241,3 +243,17 @@ void DrawAABB(const AABB& aabb, const Matrix4x4& viewProjectionMatrix, const Mat
 bool IsCollision(const AABB& aabb, const Sphere& sphere);
 
 Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle);
+
+struct LineSegment {
+	Vector3 start, end;
+};
+
+bool IsCollision(const AABB& box, const LineSegment& line);
+
+int Min(int num1, int num2);
+
+float Min(float num1, float num2);
+
+int Max(int num1, int num2);
+
+float Max(float num1, float num2);

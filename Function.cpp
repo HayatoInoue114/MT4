@@ -984,3 +984,74 @@ Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle) {
 
 	return result;
 }
+
+// 線分とAABBの当たり判定
+bool IsCollision(const AABB& box, const LineSegment& line) {
+	Vector3 dir = { line.end.x - line.start.x, line.end.y - line.start.y, line.end.z - line.start.z };
+
+	// t の範囲を計算する
+	float tMin = 0.0f;
+	float tMax = 1.0f;
+
+	for (int i = 0; i < 3; ++i) {
+		if (std::abs(dir.x) < 0.001f) {
+			if (line.start.x < box.min.x || line.start.x > box.max.x) {
+				return false;
+			}
+		}
+		else {
+			float invDir = 1.0f / dir.x;
+			float t1 = (box.min.x - line.start.x) * invDir;
+			float t2 = (box.max.x - line.start.x) * invDir;
+
+			tMin = Max(tMin, Min(t1, t2));
+			tMax = Min(tMax, Max(t1, t2));
+
+			if (tMin > tMax) {
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+
+int Min(int num1, int num2) {
+	if (num1 < num2) {
+		return num1;
+	}
+	else {
+		return num2;
+	}
+
+	return 0;
+}
+
+
+float Min(float num1, float num2) {
+	if (num1 < num2) {
+		return num1;
+	}
+	else {
+		return num2;
+	}
+}
+
+int Max(int num1, int num2) {
+	if (num1 > num2) {
+		return num1;
+	}
+	else {
+		return num2;
+	}
+}
+
+float Max(float num1, float num2) {
+	if (num1 > num2) {
+		return num1;
+	}
+	else {
+		return num2;
+	}
+}
