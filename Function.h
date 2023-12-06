@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <iostream>
 #include <string>
+#include "Vector4.h"
 
 #define M_PI 3.14f
 
@@ -257,3 +258,29 @@ float Min(float num1, float num2);
 int Max(int num1, int num2);
 
 float Max(float num1, float num2);
+
+Vector2 operator+(const Vector2& a, const Vector2& b);
+
+Vector2 operator-(const Vector2& a, const Vector2& b);
+
+Vector2 operator*(const Vector2& a, const Vector2& b);
+
+Vector2 operator*(const float& a, const Vector2& b);
+
+Vector3 operator+(const Vector3& a, const Vector3& b);
+
+Vector3 operator+(const Vector3& a, const float& b);
+
+Vector3 operator-(const Vector3& a, const Vector3& b);
+
+Vector3 operator-(const Vector3& a, const float& b);
+
+Vector3 operator*(const Vector3& a, const Vector3& b);
+
+Vector3 operator*(const float& a, const Vector3& b);
+
+Vector3 operator*(const Vector3& vec, const Matrix4x4& mat);
+
+Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float cos, float sin);
+
+Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to);

@@ -612,6 +612,7 @@ Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2) {
 
 	return resultMatrix;
 }
+
 void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix) {
 	const float kGridHalfWidth = 2.0f;											//Gridの半分の幅
 	const uint32_t kSubdivision = 10;											//分割数
@@ -974,17 +975,6 @@ bool IsCollision(const AABB& aabb, const Sphere& sphere) {
 	return false;
 }
 
-Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle) {
-	Matrix4x4 result = {
-		std::pow(axis.x,2) * (1 - std::cos(angle)) + std::cos(angle),   axis.x * axis.y * (1 - std::cos(angle)) + axis.z * std::sin(angle),  axis.x * axis.z * (1 - std::cos(angle)) - axis.y * std::sin(angle),0,
-		axis.x * axis.y * (1 - std::cos(angle)) - axis.z * std::sin(angle),   std::pow(axis.y,2) * (1 - std::cos(angle)) + std::cos(angle),  axis.y * axis.z * (1 - std::cos(angle)) + axis.x * std::sin(angle),0,
-		axis.x * axis.z * (1 - std::cos(angle)) + axis.y * std::cos(angle),   axis.y * axis.z * (1 - std::cos(angle)) - axis.x * std::sin(angle),  std::pow(axis.z,2) * (1 - std::cos(angle)) + std::cos(angle),0,
-		0,0,0,1
-	};
-
-	return result;
-}
-
 // 線分とAABBの当たり判定
 bool IsCollision(const AABB& box, const LineSegment& line) {
 	Vector3 dir = { line.end.x - line.start.x, line.end.y - line.start.y, line.end.z - line.start.z };
@@ -1055,3 +1045,139 @@ float Max(float num1, float num2) {
 		return num2;
 	}
 }
+
+Vector2 operator+(const Vector2& a, const Vector2& b) {
+	Vector2 c = { a.x + b.x,a.y + b.y };
+
+	return c;
+}
+
+Vector2 operator-(const Vector2& a, const Vector2& b) {
+	Vector2 c = { a.x - b.x,a.y - b.y };
+
+	return c;
+}
+
+Vector2 operator*(const Vector2& a, const Vector2& b) {
+	Vector2 c = { a.x * b.x,a.y * b.y };
+
+	return c;
+}
+
+Vector2 operator*(const float& a, const Vector2& b) {
+	Vector2 c = { a * b.x,a * b.y };
+
+	return c;
+}
+
+Vector3 operator+(const Vector3& a, const Vector3& b) {
+	Vector3 c = { a.x + b.x,a.y + b.y ,a.z + b.z };
+
+	return c;
+}
+
+Vector3 operator+(const Vector3& a, const float& b) {
+	Vector3 c = { a.x + b,a.y + b,a.z + b };
+
+	return c;
+}
+
+Vector3 operator-(const Vector3& a, const Vector3& b) {
+	Vector3 c = { a.x - b.x,a.y - b.y,a.z - b.z };
+
+	return c;
+}
+
+Vector3 operator-(const Vector3& a, const float& b) {
+	Vector3 c = { a.x - b,a.y - b,a.z - b };
+
+	return c;
+}
+
+Vector3 operator*(const Vector3& a, const Vector3& b) {
+	Vector3 c = { a.x * b.x, a.y * b.y, a.z * b.z };
+
+	return c;
+}
+
+Vector3 operator*(const float& a, const Vector3& b) {
+	Vector3 c = { a * b.x,a * b.y,a * b.z };
+
+	return c;
+}
+
+// Vector3とMatrix4x4の乗算関数
+Vector3 operator*(const Vector3& vec, const Matrix4x4& mat) {
+	Vector4 result = {
+		vec.x * mat.m[0][0] + vec.y * mat.m[1][0] + vec.z * mat.m[2][0] + mat.m[3][0],
+		vec.x * mat.m[0][1] + vec.y * mat.m[1][1] + vec.z * mat.m[2][1] + mat.m[3][1],
+		vec.x * mat.m[0][2] + vec.y * mat.m[1][2] + vec.z * mat.m[2][2] + mat.m[3][2],
+		vec.x * mat.m[0][3] + vec.y * mat.m[1][3] + vec.z * mat.m[2][3] + mat.m[3][3]
+	};
+
+	// 4次元ベクトルを3次元ベクトルに戻す
+	return { result.x / result.w, result.y / result.w, result.z / result.w };
+}
+
+Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle) {
+	Matrix4x4 result = {
+		std::pow(axis.x,2) * (1 - std::cos(angle)) + std::cos(angle),   axis.x * axis.y * (1 - std::cos(angle)) + axis.z * std::sin(angle),  axis.x * axis.z * (1 - std::cos(angle)) - axis.y * std::sin(angle),0,
+		axis.x * axis.y * (1 - std::cos(angle)) - axis.z * std::sin(angle),   std::pow(axis.y,2) * (1 - std::cos(angle)) + std::cos(angle),  axis.y * axis.z * (1 - std::cos(angle)) + axis.x * std::sin(angle),0,
+		axis.x * axis.z * (1 - std::cos(angle)) + axis.y * std::cos(angle),   axis.y * axis.z * (1 - std::cos(angle)) - axis.x * std::sin(angle),  std::pow(axis.z,2) * (1 - std::cos(angle)) + std::cos(angle),0,
+		0,0,0,1
+	};
+
+	return result;
+}
+
+Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float cos,float sin) {
+	Matrix4x4 result = {
+		std::pow(axis.x,2) * (1 - cos) + cos,   axis.x * axis.y * (1 - cos) + axis.z * sin,  axis.x * axis.z * (1 - cos) - axis.y * sin,0,
+		axis.x * axis.y * (1 - cos) - axis.z * sin,   std::pow(axis.y,2) * (1 - cos) + cos,  axis.y * axis.z * (1 - cos) + axis.x * sin,0,
+		axis.x * axis.z * (1 - cos) + axis.y * cos,   axis.y * axis.z * (1 - cos) - axis.x * sin,  std::pow(axis.z,2) * (1 - cos) + cos,0,
+		0,0,0,1
+	};
+
+	return result;
+}
+
+//ある方向からある方向へ向ける回転行列
+Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to) {
+	// 軸と角度を求める
+	
+	/*Vector3 n;
+	if (from.x == -to.x && from.y == -to.y && from.z == -to.z) {
+		if (from.x != 0 || from.y != 0) {
+			n = Normalize({ from.y,-from.x,0 });
+		}
+		else if (from.x != 0 || from.z != 0) {
+			n = Normalize({ from.z,0,-from.x });
+		}
+	}
+	else {
+		n = Normalize(Cross(from, to));
+	}*/
+	Vector3 axis{};
+	if (from.x == -to.x && from.y == -to.y && from.z == -to.z) {
+		if (from.x != 0 || from.y != 0) {
+			axis = Normalize({ from.y,-from.x,0 });
+		}
+		else if (from.x != 0 || from.z != 0) {
+			axis = Normalize({ from.z , 0,-from.x });
+		}
+	}
+	else {
+		axis = Normalize(Cross(from, to));
+	}
+
+
+	
+
+	float cos = Dot(from, to);
+	float sin = Length(Cross(from, to));
+
+	Matrix4x4 result = MakeRotateAxisAngle(axis, cos,sin);
+
+	return result;
+}
+
