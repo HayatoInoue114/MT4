@@ -70,7 +70,7 @@ Matrix3x3 MaketranslateMatrix(Vector2 translate) {
 }
 
 Vector2 Transform(Vector2 vector, Matrix3x3 matrix) {
-	Vector2 result;
+	Vector2 result{};
 	result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + 1.0f * matrix.m[2][0];
 	result.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + 1.0f * matrix.m[2][1];
 	float w = vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + 1.0f * matrix.m[2][2];
@@ -124,7 +124,7 @@ Matrix3x3 MakeAffineMatrix(Vector2 scale, float theta, Vector2 translate) {
 
 
 Matrix2x2 MatrixMultiply(float num, Matrix2x2 matrix) {
-	Matrix2x2 mat;
+	Matrix2x2 mat{};
 	mat.m[0][0] = matrix.m[0][0] * num;
 	mat.m[0][1] = matrix.m[0][1] * num;
 	mat.m[1][0] = matrix.m[1][0] * num;
@@ -134,7 +134,7 @@ Matrix2x2 MatrixMultiply(float num, Matrix2x2 matrix) {
 }
 
 Matrix3x3 MatrixMultiply(float num, Matrix3x3 matrix) {
-	Matrix3x3 mat;
+	Matrix3x3 mat{};
 	mat.m[0][0] = matrix.m[0][0] * num;
 	mat.m[0][1] = matrix.m[0][1] * num;
 	mat.m[0][2] = matrix.m[0][2] * num;
@@ -496,7 +496,7 @@ Vector3 Cross(const Vector3& v1, const Vector3& v2) {
 }
 
 Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix) {
-	Vector3 result;
+	Vector3 result{};
 	result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0] + 1.0f * matrix.m[3][0];
 	result.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1] + 1.0f * matrix.m[3][1];
 	result.z = vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2] + 1.0f * matrix.m[3][2];
@@ -509,7 +509,7 @@ Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix) {
 }
 
 float InverseNum(const Matrix4x4& m, int a, int b, int c, int d, int e, int f, int g, int h) {
-	float resultNum;
+	float resultNum{};
 	resultNum = m.m[a - 1][b - 1] * m.m[c - 1][d - 1] * m.m[e - 1][f - 1] * m.m[g - 1][h - 1];
 	return resultNum;
 }
@@ -797,13 +797,13 @@ Vector3 Perpendicular(const Vector3& vector) {
 
 void DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color) {
 	Vector3 center = Multiply(plane.distance, plane.normal); //1
-	Vector3 perpendiculars[4];
+	Vector3 perpendiculars[4]{};
 	perpendiculars[0] = Normalize(Perpendicular(plane.normal)); //2
 	perpendiculars[1] = { -perpendiculars[0].x - perpendiculars[0].y, -perpendiculars[0].z }; //3
 	perpendiculars[2] = Cross(plane.normal, perpendiculars[0]); //4
 	perpendiculars[3] = { -perpendiculars[2].x,-perpendiculars[2].y ,-perpendiculars[2].z }; //5
 	//6
-	Vector3 points[4];
+	Vector3 points[4]{};
 	for (int32_t index = 0; index < 4; ++index) {
 		Vector3 extend = Multiply(2.0f, perpendiculars[index]);
 		Vector3 point = Add(center, extend);
@@ -837,7 +837,7 @@ void DrawSegment(const Segment& segment, const Matrix4x4& viewProjectionMatrix, 
 	Vector3 start = segment.origin;
 	Vector3 end = { segment.origin.x + segment.diff.x, segment.origin.y + segment.diff.y, segment.origin.z + segment.diff.z };
 
-	Vector3 points[2];
+	Vector3 points[2]{};
 	points[0] = Transform(Transform(start, viewProjectionMatrix), viewportMatrix);
 	points[1] = Transform(Transform(end, viewProjectionMatrix), viewportMatrix);
 
@@ -901,7 +901,7 @@ bool IsCollision(const Triangle& triangle, const Segment& segment) {
 
 void DrawTriange(const Triangle& triangle, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color) {
 	// 頂点座標
-	Vector3 screenVertices[3];
+	Vector3 screenVertices[3]{};
 	for (uint32_t i = 0; i < 3; ++i) {
 		Vector3 ndcVertex = Transform(triangle.vertices[i], viewProjectionMatrix);
 		screenVertices[i] = Transform(ndcVertex, viewportMatrix);
@@ -1158,7 +1158,7 @@ Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to) {
 		n = Normalize(Cross(from, to));
 	}*/
 	Vector3 axis{};
-	if (from.x == -to.x && from.y == -to.y && from.z == -to.z) {
+	/*if (from.x == -to.x && from.y == -to.y && from.z == -to.z) {
 		if (from.x != 0 || from.y != 0) {
 			axis = Normalize({ from.y,-from.x,0 });
 		}
@@ -1168,7 +1168,7 @@ Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to) {
 	}
 	else {
 		axis = Normalize(Cross(from, to));
-	}
+	}*/
 
 
 	
@@ -1181,3 +1181,62 @@ Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to) {
 	return result;
 }
 
+
+Quaternion Multyply(const Quaternion& lhs, const Quaternion& rhs) {
+	float w = lhs.w * rhs.w - lhs.x * rhs.x - lhs.y * rhs.y - lhs.z * rhs.z;
+	float x = lhs.w * rhs.x + lhs.x * rhs.w + lhs.y * rhs.z - lhs.z * rhs.y;
+	float y = lhs.w * rhs.y - lhs.x * rhs.z + lhs.y * rhs.w + lhs.z * rhs.x;
+	float z = lhs.w * rhs.z + lhs.x * rhs.y - lhs.y * rhs.x + lhs.z * rhs.w;
+
+	return Quaternion(x, y, z, w);
+}
+
+Quaternion IdentityQuaternion() {
+	return Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+Quaternion Conjugete(const Quaternion& quaternion) {
+	return Quaternion(-quaternion.x, -quaternion.y, -quaternion.z, quaternion.w);
+}
+
+float Norm(const Quaternion& v) {
+	float result{};
+	result = sqrtf(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);
+	return result;
+}
+
+Quaternion Normalize(const Quaternion& quaternion) {
+	if (Norm(quaternion) != 0.0f) {
+		float invNorm = 1.0f / Norm(quaternion);
+		Quaternion num = {
+			quaternion.x / Norm(quaternion),
+			quaternion.y / Norm(quaternion),
+			quaternion.z / Norm(quaternion),
+			quaternion.w / Norm(quaternion)
+		};
+		return num;
+	}
+
+	return quaternion;
+}
+
+Quaternion Inverse(const Quaternion& v) {
+	float norm = Norm(v) * Norm(v);
+	Quaternion con = Conjugete(v);
+	Quaternion result = {
+		con.x / norm,
+		con.y / norm,
+		con.z / norm,
+		con.w / norm
+	};
+
+	return result;
+}
+
+void QuaternionScreenPrintf(int x, int y, const Quaternion& q, const char* label) {
+	Novice::ScreenPrintf(x, y, "%.02f", q.x);
+	Novice::ScreenPrintf(x + kColumnWidth, y, "%.02f", q.y);
+	Novice::ScreenPrintf(x + kColumnWidth * 2, y, "%.02f", q.z);
+	Novice::ScreenPrintf(x + kColumnWidth * 3, y, "%.02f", q.w);
+	Novice::ScreenPrintf(x + kColumnWidth * 4, y, "%s", label);
+}

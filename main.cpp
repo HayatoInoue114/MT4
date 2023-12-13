@@ -9,10 +9,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ライブラリの初期化
 	Novice::Initialize(kWindowTitle, 1280, 720);
 
+	Quaternion q1 = { 2.0f,3.0f,4.0f,1.0f };
+	Quaternion q2 = { 1.0f,3.0f,5.0f,2.0f };
 
-	Vector3 axis = Normalize({ 1.0f,1.0f,1.0f });
-	float angle = 0.44f;
-	Matrix4x4 rotateMatrix = MakeRotateAxisAngle(axis, angle);
 
 	// キー入力結果を受け取る箱
 	char keys[256] = {0};
@@ -30,15 +29,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓更新処理ここから
 		///
-		Vector3 from0 = Normalize(Vector3{ 1.0f,0.7f,0.5f });
-		Vector3 to0 = -1.0f * from0;
-		Vector3 from1 = Normalize(Vector3{ -0.6f,0.9f,0.2f });
-		Vector3 to1 = Normalize(Vector3{ 0.4f,0.7f,-0.5f });
-		Matrix4x4 rotateMatrix0 = DirectionToDirection(
-			Normalize(Vector3{ 1.0f,0.0f,0.0f }), Normalize(Vector3{ -1.0f, 0.0f, 0.0f })
-		);
-		Matrix4x4 rotateMatrix1 = DirectionToDirection(from0, to0);
-		Matrix4x4 rotateMatrix2 = DirectionToDirection(from1, to1);
+		Quaternion identity = IdentityQuaternion();
+		Quaternion conj = Conjugete(q1);
+		Quaternion inv = Inverse(q1);
+		Quaternion normal = Normalize(q1);
+		Quaternion mul1 = Multyply(q1, q2);
+		Quaternion mul2 = Multyply(q2, q1);
+		float norm = Norm(q1);
 
 		///
 		/// ↑更新処理ここまで
@@ -47,10 +44,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓描画処理ここから
 		///
-		MatrixScreenPrintf(0, 0, rotateMatrix0);
-		MatrixScreenPrintf(0, kRowHeight * 5, rotateMatrix1);
-		MatrixScreenPrintf(0, kRowHeight * 10, rotateMatrix2);
-
+		Novice::ScreenPrintf(0, 0, "%2.2f,%2.2f,%2.2f,%2.2f        : Identity",identity.x,identity.y,identity.z,identity.w);
+		Novice::ScreenPrintf(0, 20, "%2.2f,%2.2f,%2.2f,%2.2f       : Conjugate", conj.x, conj.y, conj.z, conj.w);
+		Novice::ScreenPrintf(0, 40, "%2.2f,%2.2f,%2.2f,%2.2f       : Inverse", inv.x, inv.y, inv.z, inv.w);
+		Novice::ScreenPrintf(0, 60, "%2.2f,%2.2f,%2.2f,%2.2f       : Normalize", normal.x, normal.y, normal.z, normal.w);
+		Novice::ScreenPrintf(0, 80, "%2.2f,%2.2f,%2.2f,%2.2f       : Multyply(q1, q2)", mul1.x, mul1.y, mul1.z, mul1.w);
+		Novice::ScreenPrintf(0, 100, "%2.2f,%2.2f,%2.2f,%2.2f      : Multyply(q2, q1)", mul2.x, mul2.y, mul2.z, mul2.w);
+		Novice::ScreenPrintf(0, 120, "%2.2f                        : Norm",norm);
 		///
 		/// ↑描画処理ここまで
 		///

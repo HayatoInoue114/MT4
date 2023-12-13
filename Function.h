@@ -284,3 +284,24 @@ Vector3 operator*(const Vector3& vec, const Matrix4x4& mat);
 Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float cos, float sin);
 
 Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to);
+
+struct Quaternion {
+	float x;
+	float y;
+	float z;
+	float w;
+};
+
+Quaternion Multyply(const Quaternion& lhs, const Quaternion& rhs);
+
+Quaternion IdentityQuaternion();
+
+Quaternion Conjugete(const Quaternion& quaternion);
+
+float Norm(const Quaternion& v);
+
+Quaternion Normalize(const Quaternion& quaternion);
+
+Quaternion Inverse(const Quaternion& v);
+
+void QuaternionScreenPrintf(int x, int y, const Quaternion& q, const char* label);
