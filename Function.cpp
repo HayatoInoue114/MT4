@@ -1240,3 +1240,49 @@ void QuaternionScreenPrintf(int x, int y, const Quaternion& q, const char* label
 	Novice::ScreenPrintf(x + kColumnWidth * 3, y, "%.02f", q.w);
 	Novice::ScreenPrintf(x + kColumnWidth * 4, y, "%s", label);
 }
+
+Quaternion MakeRotateAxisAngleQuaternion(const Vector3& axis, float angle) {
+	Quaternion result;
+	result.x = axis.x * sinf(angle / 2.0f);
+	result.y = axis.y * sinf(angle / 2.0f);
+	result.z = axis.z * sinf(angle / 2.0f);
+	result.w = cosf(angle / 2.0f);
+
+	return result;
+}
+
+Vector3 RotateVector(const Vector3& vector, Quaternion quaternion) {
+	Quaternion quaternionVec = { vector.x,vector.y,vector.z,0.0f };
+	Quaternion conjugate = Conjugete(quaternion);
+	Quaternion rotation = Multyply(quaternion, Multyply(quaternionVec, conjugate));
+
+	
+	Vector3 result = { rotation.x,rotation.y,rotation.z };;
+
+	return result;
+}
+
+Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion) {
+	Matrix4x4 result;
+	result.m[0][0] = (quaternion.w * quaternion.w) + (quaternion.x * quaternion.x) - (quaternion.y * quaternion.y) - (quaternion.z * quaternion.z);
+	result.m[0][1] = 2 * ((quaternion.x * quaternion.y) + (quaternion.w * quaternion.z));
+	result.m[0][2] = 2 * ((quaternion.x * quaternion.z) - (quaternion.w * quaternion.y));
+	result.m[0][3] = 0;
+
+	result.m[1][0] = 2 * ((quaternion.x * quaternion.y) - (quaternion.w * quaternion.z));
+	result.m[1][1] = (quaternion.w * quaternion.w) - (quaternion.x * quaternion.x) + (quaternion.y * quaternion.y) - (quaternion.z * quaternion.z);
+	result.m[1][2] = 2 * ((quaternion.y * quaternion.z) + (quaternion.w * quaternion.x));
+	result.m[1][3] = 0;
+
+	result.m[2][0] = 2 * ((quaternion.x * quaternion.z) + (quaternion.w * quaternion.y));
+	result.m[2][1] = 2 * ((quaternion.y * quaternion.z) - (quaternion.w * quaternion.x));
+	result.m[2][2] = (quaternion.w * quaternion.w) - (quaternion.x * quaternion.x) - (quaternion.y * quaternion.y) + (quaternion.z * quaternion.z);
+	result.m[2][3] = 0;
+
+	result.m[3][0] = 0;
+	result.m[3][1] = 0;
+	result.m[3][2] = 0;
+	result.m[3][3] = 1;
+
+	return result;
+}

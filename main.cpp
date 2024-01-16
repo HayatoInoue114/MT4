@@ -29,13 +29,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓更新処理ここから
 		///
-		Quaternion identity = IdentityQuaternion();
-		Quaternion conj = Conjugete(q1);
-		Quaternion inv = Inverse(q1);
-		Quaternion normal = Normalize(q1);
-		Quaternion mul1 = Multyply(q1, q2);
-		Quaternion mul2 = Multyply(q2, q1);
-		float norm = Norm(q1);
+		Quaternion rotation = MakeRotateAxisAngleQuaternion(Normalize(Vector3{ 1.0f,0.4f,-0.2f }), 0.45f);
+		Vector3 pointY = { 2.1f,-0.9f,1.3f };
+		Matrix4x4 rotateMastrix = MakeRotateMatrix(rotation);
+		Vector3 rotateByQuanternion = RotateVector(pointY, rotation);
+		Vector3 rotateByMatrix = Transform(pointY, rotateMastrix);
 
 		///
 		/// ↑更新処理ここまで
@@ -44,13 +42,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓描画処理ここから
 		///
-		Novice::ScreenPrintf(0, 0, "%2.2f,%2.2f,%2.2f,%2.2f        : Identity",identity.x,identity.y,identity.z,identity.w);
-		Novice::ScreenPrintf(0, 20, "%2.2f,%2.2f,%2.2f,%2.2f       : Conjugate", conj.x, conj.y, conj.z, conj.w);
-		Novice::ScreenPrintf(0, 40, "%2.2f,%2.2f,%2.2f,%2.2f       : Inverse", inv.x, inv.y, inv.z, inv.w);
-		Novice::ScreenPrintf(0, 60, "%2.2f,%2.2f,%2.2f,%2.2f       : Normalize", normal.x, normal.y, normal.z, normal.w);
-		Novice::ScreenPrintf(0, 80, "%2.2f,%2.2f,%2.2f,%2.2f       : Multyply(q1, q2)", mul1.x, mul1.y, mul1.z, mul1.w);
-		Novice::ScreenPrintf(0, 100, "%2.2f,%2.2f,%2.2f,%2.2f      : Multyply(q2, q1)", mul2.x, mul2.y, mul2.z, mul2.w);
-		Novice::ScreenPrintf(0, 120, "%2.2f                        : Norm",norm);
+		QuaternionScreenPrintf(0, kRowHeight * 0, rotation, "	: rotation");
+		MatrixScreenPrintf(0, kRowHeight * 1, rotateMastrix);
+		VectorScreenPrintf(0, kRowHeight * 6, rotateByQuanternion, "	: rotateByQuaternion");
+		VectorScreenPrintf(0, kRowHeight * 7, rotateByMatrix, "	: rotateByMatrix");
+
 		///
 		/// ↑描画処理ここまで
 		///
